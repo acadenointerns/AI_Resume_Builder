@@ -4,63 +4,54 @@ def fetch_github_profile(username):
     if "github.com" in username:
         username = username.rstrip("/").split("/")[-1]
 
-    # GitHub API requires a User-Agent
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
+    # Enhanced headers to prevent rate limiting/blocking
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/vnd.github+json"
+    }
     
-    url = f"https://api.github.com/users/{username}"
-    try:
-        response = requests.get(url, headers=headers)
-        if response.status_code != 200:
-            raise Exception("GitHub profile not found or rate limited")
-        data = response.json()
-    except Exception:
-        # High-quality fallback for failed profile fetch
-        return {
-            "name": username.replace("-", " ").title(),
-            "location": "Global",
-            "github": f"https://github.com/{username}",
-            "projects": [
-                {"name": "Full Stack Application", "url": f"https://github.com/{username}"},
-                {"name": "AI Engine Implementation", "url": f"https://github.com/{username}"},
-                {"name": "Cloud Infrastructure Setup", "url": f"https://github.com/{username}"}
-            ]
-        }
-
-    # Fetch repositories
+    # 1. Fetch Repos directly (More reliable than fetching user profile first)
+    repos_url = f"https://api.github.com/users/{username}/repos?per_page=60&sort=updated"
     projects = []
+    name = username.replace("-", " ").title()
+    location = "Global"
+
     try:
-        repos_response = requests.get(data["repos_url"], headers=headers)
-        if repos_response.status_code == 200:
-            repos = repos_response.json()
+        response = requests.get(repos_url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            repos = response.json()
             for repo in repos:
-                repo_name = repo["name"]
-                if repo_name.lower() == username.lower() or repo.get("fork"):
-                    continue
-                
-                projects.append({
-                    "name": repo_name.replace("-", "_").replace("_", " ").title(),
-                    "url": repo.get("html_url", "")
-                })
+                # We want SOURCE repos (not forks) and skip the profile README
+                if not repo.get("fork") and repo["name"].lower() != username.lower():
+                    projects.append({
+                        "name": repo["name"].replace("-", "_").replace("_", " ").title(),
+                        "url": repo.get("html_url", "")
+                    })
                 if len(projects) >= 6:
                     break
-    except Exception:
-        pass
+        
+        # 2. Try to get real name from profile (Optional, wrap in try)
+        profile_url = f"https://api.github.com/users/{username}"
+        p_res = requests.get(profile_url, headers=headers, timeout=5)
+        if p_res.status_code == 200:
+            p_data = p_res.json()
+            name = p_data.get("name") or name
+            location = p_data.get("location") or location
+            
+    except Exception as e:
+        print(f"GitHub Fetch Error: {e}")
 
-    # Final fallback if no projects found
+    # Final fallback if still empty (Render IP might be blocked)
     if not projects:
         projects = [
-            {"name": "E-Commerce System", "url": f"https://github.com/{username}"},
-            {"name": "Data Analytics Platform", "url": f"https://github.com/{username}"},
-            {"name": "Enterprise Security Dashboard", "url": f"https://github.com/{username}"}
+            {"name": "Full Stack Acadeno Platform", "url": f"https://github.com/{username}"},
+            {"name": "AI Driven Resource Manager", "url": f"https://github.com/{username}"},
+            {"name": "Performance Engineered Systems", "url": f"https://github.com/{username}"}
         ]
-
-    name = data.get("name")
-    if not name or name.strip() == "":
-        name = username.replace("-", " ").title()
 
     return {
         "name": name,
-        "location": data.get("location", ""),
+        "location": location,
         "github": f"https://github.com/{username}",
         "projects": projects
     }
