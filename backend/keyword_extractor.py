@@ -1,11 +1,9 @@
-import spacy
-import re
-
-# Load SpaCy model
 try:
+    import spacy
     nlp = spacy.load("en_core_web_sm")
-except:
+except (ImportError, Exception):
     nlp = None
+import re
 
 # Comprehensive set of technical terms
 TECH_TERMS = {
