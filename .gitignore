@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+resumes/
+.env
+venv/
+.vscode/
+*.log
+backend/resumes/

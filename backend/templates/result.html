@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analysis | Professional Grade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.4);
+            --secondary: #a855f7;
+            --bg: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 80% 20%, var(--primary-glow) 0%, transparent 40%);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .btn-back {
+            color: var(--text-dim);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .btn-back:hover {
+            color: white;
+        }
+
+        .nav-logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-logo-img {
+            height: 60px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 40px;
+        }
+
+        .preview-card {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .score-card {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            height: fit-content;
+            position: sticky;
+            top: 40px;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 10px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .btn-download,
+        .btn-edit {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 10px 20px -5px var(--primary-glow);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px -5px var(--primary-glow);
+        }
+
+        .btn-edit {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-edit:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .resume-preview-title {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 800;
+        }
+
+        .item-section {
+            margin-bottom: 40px;
+        }
+
+        .item-section h3 {
+            color: var(--primary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .skill-tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: white;
+            font-weight: 500;
+        }
+
+        .resume-text {
+            line-height: 1.8;
+            color: var(--text-dim);
+            text-align: justify;
+        }
+
+        .project-item {
+            margin-bottom: 30px;
+            padding-left: 20px;
+            border-left: 2px solid var(--primary);
+        }
+
+        .project-title {
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .bullet {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            color: var(--text-dim);
+        }
+
+        /* Quill adjustments */
+        .ql-container.ql-snow {
+            border: none !important;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .ql-editor {
+            padding: 0 !important;
+            color: var(--text-dim);
+        }
+
+        .ql-toolbar.ql-snow {
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 5px;
+            display: none;
+            /* Hidden by default */
+        }
+
+        .editing .ql-toolbar.ql-snow {
+            display: block;
+        }
+
+        .editing .preview-card {
+            border: 1px solid var(--primary);
+        }
+
+        footer {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            padding-bottom: 30px;
+        }
+
+        .footer-branding {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .footer-branding span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .contact-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header-nav">
+            <a href="/" class="btn-back">← Adjust Resume</a>
+            <div style="font-weight: 800; color: var(--primary); letter-spacing: 1px;">ANALYSIS COMPLETE</div>
+        </div>
+
+        <div class="result-grid">
+            <div class="preview-card" id="resume-container">
+                <h2 class="resume-preview-title" id="resume-name">{{ resume.name }}</h2>
+
+                <div class="item-section">
+                    <h3>Executive Summary</h3>
+                    <div id="editor-summary" class="resume-text">{{ resume.summary }}</div>
+                </div>
+
+                <div class="item-section">
+                    <h3>Core Technical Competencies</h3>
+                    <div id="editor-skills" class="resume-text">
+                        {% for category, items in resume.skills.items() %}
+                        {% if items %}
+                        <div style="margin-bottom: 12px;">
+                            <strong
+                                style="color: var(--text); font-size: 0.95rem; display: block; margin-bottom: 5px;">{{
+                                category }}:</strong>
+                            <div style="margin-top: 5px;">
+                                {% for skill in items %}
+                                <span
+                                    style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2px 10px; border-radius: 4px; font-size: 0.85rem; display: inline-block; margin-right: 5px; margin-bottom: 5px; color: var(--text-dim);">{{
+                                    skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="item-section">
+                    <h3>Strategic Impact & Experience</h3>
+                    <div id="editor-experience" class="resume-text">
+                        {% for exp in resume.experience %}
+                        <div
+                            style="margin-bottom: 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 15px;">
+                            <div style="margin-bottom: 8px;">
+                                <span
+                                    style="font-weight: 700; color: var(--text); font-size: 1.15rem; margin-right: 15px;">{{
+                                    exp.title }}</span>
+                                {% if exp.url %}
+                                <a href="{{ exp.url }}" target="_blank"
+                                    style="color: var(--primary); font-size: 0.85rem; text-decoration: none;">View
+                                    Project ↗</a>
+                                {% endif %}
+                            </div>
+                            <ul style="margin-left: 20px; list-style-type: disc;">
+                                {% for bullet in exp.bullets %}
+                                <li style="margin-bottom: 6px; color: var(--text-dim);">{{ bullet }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="score-card">
+                <div class="score-circle">{{ score }}%</div>
+                <h3 style="margin-bottom: 15px; font-size: 1.2rem;">ATS Optimization Score</h3>
+                <p style="font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 20px;">
+                    Your profile has been architected for maximum visibility. Our NLP engine confirms a <strong>{{ score
+                        }}% alignment</strong> with the target job requirements.
+                </p>
+
+                <button onclick="toggleEdit()" class="btn-edit" id="edit-btn">EDIT CONTENT</button>
+
+                <form id="download-form" action="/download_custom" method="POST">
+                    <input type="hidden" name="name" value="{{ resume.name }}">
+                    <input type="hidden" name="summary_html" id="summary_html">
+                    <input type="hidden" name="skills_html" id="skills_html">
+                    <input type="hidden" name="experience_html" id="experience_html">
+                    <button type="submit" class="btn-download" onclick="prepareDownload()">GENERATE EXECUTIVE
+                        PDF</button>
+                </form>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-branding">
+                Powered by <span>Acadeno Technologies</span>
+            </div>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                        </path>
+                    </svg>
+                    9447933266
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        const toolbarOptions = [
+            ['bold', 'italic', 'underline'],
+            [{ 'size': ['small', false, 'large', 'huge'] }],
+            [{ 'font': [] }],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            ['clean']
+        ];
+
+        let summaryQuill, skillsQuill, experienceQuill;
+        let isEditing = false;
+
+        function toggleEdit() {
+            const container = document.getElementById('resume-container');
+            const editBtn = document.getElementById('edit-btn');
+
+            if (!isEditing) {
+                // Initialize Quill
+                summaryQuill = new Quill('#editor-summary', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+                skillsQuill = new Quill('#editor-skills', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+                experienceQuill = new Quill('#editor-experience', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+
+                container.classList.add('editing');
+                editBtn.innerText = 'PREVIEW MODE';
+                isEditing = true;
+            } else {
+                // Destroy/Disable Quill (visually)
+                // In Quill 1.3, we can't easily "destroy", so we'll just toggle the UI class
+                container.classList.remove('editing');
+                editBtn.innerText = 'EDIT CONTENT';
+                isEditing = false;
+
+                // Remove toolbars manually if they persist
+                document.querySelectorAll('.ql-toolbar').forEach(el => el.style.display = 'none');
+            }
+        }
+
+        function prepareDownload() {
+            if (isEditing) {
+                document.getElementById('summary_html').value = summaryQuill.root.innerHTML;
+                document.getElementById('skills_html').value = skillsQuill.root.innerHTML;
+                document.getElementById('experience_html').value = experienceQuill.root.innerHTML;
+            } else {
+                // If never edited, use the static content
+                document.getElementById('summary_html').value = document.getElementById('editor-summary').innerHTML;
+                document.getElementById('skills_html').value = document.getElementById('editor-skills').innerHTML;
+                document.getElementById('experience_html').value = document.getElementById('editor-experience').innerHTML;
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet" role="img" aria-label="International resume illustration">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" rx="24" fill="#fff"/>
+  <g transform="translate(60,60)">
+    <g transform="translate(20,20)">
+      <circle cx="420" cy="180" r="120" fill="url(#g1)" opacity="0.12"/>
+      <path d="M400 140c30-20 70-20 100 0" stroke="#7c3aed" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M360 220c40 30 100 30 140 0" stroke="#60a5fa" stroke-width="6" fill="none" stroke-linecap="round"/>
+    </g>
+
+    <!-- Document / resume -->
+    <g transform="translate(520,60)">
+      <rect x="0" y="0" width="300" height="420" rx="12" fill="#fff" stroke="#e6edf8" stroke-width="2"/>
+      <rect x="22" y="28" width="256" height="24" rx="6" fill="#f3f7ff"/>
+      <rect x="22" y="66" width="180" height="14" rx="6" fill="#eef4ff"/>
+      <rect x="22" y="92" width="256" height="14" rx="6" fill="#f3f7ff"/>
+      <rect x="22" y="128" width="110" height="110" rx="8" fill="#eef4ff"/>
+      <rect x="142" y="128" width="136" height="110" rx="8" fill="#fff" stroke="#f1f5f9"/>
+      <rect x="22" y="254" width="256" height="14" rx="6" fill="#f3f7ff"/>
+      <rect x="22" y="280" width="200" height="14" rx="6" fill="#eef4ff"/>
+    </g>
+
+    <!-- Globe -->
+    <g transform="translate(120,220) scale(0.9)">
+      <circle cx="160" cy="120" r="80" fill="#fff" stroke="#e6edf8" stroke-width="2"/>
+      <path d="M160 40a80 80 0 1 0 0 160 80 80 0 0 0 0-160z" fill="url(#g1)" opacity="0.08"/>
+      <path d="M80 120h160" stroke="#c7d2fe" stroke-width="2" stroke-linecap="round"/>
+      <path d="M160 40v160" stroke="#c7d2fe" stroke-width="2" stroke-linecap="round"/>
+      <path d="M110 65c20 25 40 25 60 0" stroke="#a78bfa" stroke-width="3" fill="none"/>
+    </g>
+
+    <!-- Accents -->
+    <circle cx="80" cy="520" r="14" fill="#7c3aed" opacity="0.08"/>
+    <circle cx="220" cy="580" r="10" fill="#60a5fa" opacity="0.08"/>
+  </g>
+</svg>

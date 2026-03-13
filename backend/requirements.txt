@@ -1,0 +1,6 @@
+flask
+reportlab
+beautifulsoup4 
+requests
+xhtml2pdf
+gunicorn

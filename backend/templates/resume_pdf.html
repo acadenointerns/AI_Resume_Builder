@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Professional Resume - {{ resume.name }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 15mm 15mm;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            /* Classic professional font */
+            color: #1a1a1a;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            font-size: 10pt;
+        }
+
+        .container {
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .name {
+            font-size: 22pt;
+            font-weight: bold;
+            color: #000;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .contact {
+            font-size: 10pt;
+            color: #333;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+
+        .section {
+            margin-top: 12px;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #000;
+            border-bottom: 1px solid #000;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .summary {
+            text-align: justify;
+            margin-bottom: 8px;
+        }
+
+        .experience-item {
+            margin-bottom: 12px;
+        }
+
+        .project-table {
+            width: 100%;
+            border-bottom: 0.5px solid #eee;
+            margin-bottom: 3px;
+        }
+
+        .project-title {
+            font-weight: bold;
+            font-size: 11pt;
+            text-align: left;
+        }
+
+        .project-link {
+            text-align: right;
+            font-size: 8pt;
+            color: #666;
+        }
+
+        .bullet-list {
+            margin-left: 20px;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            margin-bottom: 2px;
+            text-align: justify;
+        }
+
+        .skills-table {
+            width: 100%;
+        }
+
+        .skill-category {
+            width: 150px;
+            font-weight: bold;
+            vertical-align: top;
+            padding-bottom: 4px;
+        }
+
+        .skill-items {
+            padding-bottom: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="name">{{ resume.name }}</div>
+            <div class="contact">
+                {{ resume.location }} | GitHub: {{ resume.github }}
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Professional Summary</div>
+            <div class="summary">
+                {% if custom_summary %}
+                {{ custom_summary | safe }}
+                {% else %}
+                {{ resume.summary }}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Core Technical Competencies</div>
+            <div class="skills-container">
+                {% if custom_skills %}
+                <div class="skills-content">{{ custom_skills | safe }}</div>
+                {% else %}
+                <table class="skills-table">
+                    {% for category, items in resume.skills.items() %}
+                    {% if items %}
+                    <tr>
+                        <td class="skill-category">{{ category }}:</td>
+                        <td class="skill-items">{{ items | join(', ') }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </table>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Professional Experience & Projects</div>
+            {% if custom_experience %}
+            <div class="experience-content">{{ custom_experience | safe }}</div>
+            {% else %}
+            {% for exp in resume.experience %}
+            <div class="experience-item">
+                <table class="project-table">
+                    <tr>
+                        <td class="project-title">
+                            {% if exp.url %}
+                            {{ exp.title }}
+                            {% else %}
+                            {{ exp.title }}
+                            {% endif %}
+                        </td>
+                        <td class="project-link">
+                            {% if exp.url %}
+                            [{{ exp.url }}]
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+                <ul class="bullet-list">
+                    {% for bullet in exp.bullets %}
+                    <li>{{ bullet }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="section">
+            <div class="section-title">Career Narrative & Objective</div>
+            <div class="summary">{{ resume.objective }}</div>
+        </div>
+    </div>
+</body>
+
+</html>
