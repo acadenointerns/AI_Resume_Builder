@@ -292,7 +292,8 @@
         </header>
 
         <main class="main-card">
-            <form action="/" method="POST">
+            <form id="resume-form" action="/" method="POST">
+                <input type="hidden" id="github_data" name="github_data">
                 <div class="form-group">
                     <label for="github">GitHub Profile Username</label>
                     <input type="text" id="github" name="github" placeholder="e.g., torvalds" required>
@@ -310,7 +311,7 @@
                         required></textarea>
                 </div>
 
-                <button type="submit" class="btn-submit">ARCHITECT MY RESUME</button>
+                <button type="submit" id="submit-btn" class="btn-submit">ARCHITECT MY RESUME</button>
             </form>
         </main>
 
@@ -346,6 +347,54 @@
             </div>
         </footer>
     </div>
+    <script>
+        document.getElementById('resume-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "FETCHING GITHUB PULSE...";
+            btn.disabled = true;
+
+            const username = document.getElementById('github').value.trim().split('/').pop();
+            const githubDataInput = document.getElementById('github_data');
+
+            try {
+                // Fetch from client side to bypass Render server IP blocks
+                const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=60&sort=updated`);
+                if (response.ok) {
+                    const repos = await response.json();
+                    const filteredRepos = repos
+                        .filter(r => !r.fork && r.name.toLowerCase() !== username.toLowerCase())
+                        .slice(0, 8)
+                        .map(r => ({
+                            name: r.name.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                            url: r.html_url
+                        }));
+
+                    // Also try to get real name
+                    const profileRes = await fetch(`https://api.github.com/users/${username}`);
+                    let realName = username;
+                    let location = "Global";
+                    if (profileRes.ok) {
+                        const profile = await profileRes.json();
+                        realName = profile.name || username;
+                        location = profile.location || "Global";
+                    }
+
+                    githubDataInput.value = JSON.stringify({
+                        name: realName,
+                        location: location,
+                        projects: filteredRepos
+                    });
+                }
+            } catch (err) {
+                console.error("Client side fetch failed:", err);
+            }
+
+            btn.innerText = "ARCHITECTING RESUME...";
+            this.submit();
+        });
+    </script>
 </body>
 
 </html>

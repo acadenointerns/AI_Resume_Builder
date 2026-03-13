@@ -49,10 +49,20 @@ def index():
         github = request.form["github"].strip()
         portfolio = request.form.get("portfolio", "")
         job_desc = request.form["job_description"].strip()
+        github_data_raw = request.form.get("github_data")
 
-        profile = fetch_github_profile(github)
+        # Use client-side data if available (bypasses Render IP blocks)
+        if github_data_raw:
+            try:
+                import json
+                profile = json.loads(github_data_raw)
+                profile["github"] = f"https://github.com/{github.split('/')[-1]}"
+            except Exception:
+                profile = fetch_github_profile(github)
+        else:
+            profile = fetch_github_profile(github)
+
         profile["portfolio"] = portfolio
-
         resume = generate_resume(profile, job_desc)
 
         ats_data = score_resume(resume, job_desc)
