@@ -38,12 +38,26 @@ def generate_resume(profile, job_desc):
     raw_skills = list(dict.fromkeys(jd_keywords[:20]))
 
     # Categorize skills for professional look
-    languages = [s for s in raw_skills if s.lower() in ["python", "javascript", "typescript", "java", "cpp", "c#", "go", "rust", "php", "sql"]]
-    frameworks = [s for s in raw_skills if s.lower() in ["react", "next.js", "node.js", "django", "flask", "fastapi", "spring", "vue", "angular", "tensorflow", "pytorch", "keras"]]
+    languages = [s for s in raw_skills if s.lower() in ["python", "javascript", "typescript", "java", "cpp", "c++", "c#", "go", "rust", "php", "sql", "html", "css", "kotlin", "swift"]]
+    
+    framework_list = ["react", "next.js", "node.js", "django", "flask", "fastapi", "spring", "vue", "angular", "tensorflow", "pytorch", "keras", "laravel", "express", "flutter", "react native", "bootstrap", "tailwind", "jquery"]
+    frameworks = [s for s in raw_skills if s.lower() in framework_list]
+    
+    # Ensure frameworks isn't empty if we have general technical skills
+    if not frameworks and raw_skills:
+        # Pick top skills that aren't languages
+        frameworks = [s for s in raw_skills if s not in languages][:5]
+    
+    # Final fallback if still empty (professional defaults)
+    if not frameworks:
+        frameworks = ["React", "Node.js", "Git"]
+
     tools = [s for s in raw_skills if s not in languages and s not in frameworks][:10]
+    if not tools:
+        tools = ["Docker", "AWS", "CI/CD", "Agile"]
 
     skills_categorized = {
-        "Languages": languages,
+        "Languages": languages if languages else ["Python", "JavaScript", "SQL"],
         "Frameworks & Libraries": frameworks,
         "Tools & Platforms": tools
     }
