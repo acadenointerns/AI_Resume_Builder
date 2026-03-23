@@ -17,14 +17,10 @@
             --text: #f8fafc;
             --text-dim: #94a3b8;
             --success: #10b981;
+            --border: rgba(255, 255, 255, 0.1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
 
         body {
             background-color: var(--bg);
@@ -33,12 +29,9 @@
             background-image: radial-gradient(circle at 80% 20%, var(--primary-glow) 0%, transparent 40%);
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
 
+        /* ── Nav ── */
         .header-nav {
             display: flex;
             justify-content: space-between;
@@ -47,234 +40,193 @@
         }
 
         .btn-back {
-            color: var(--text-dim);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            transition: color 0.3s;
+            color: var(--text-dim); text-decoration: none;
+            display: flex; align-items: center; gap: 8px;
+            font-weight: 500; transition: color 0.3s;
         }
+        .btn-back:hover { color: white; }
 
-        .btn-back:hover {
-            color: white;
-        }
-
-        .nav-logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .nav-logo-img {
-            height: 60px;
-            width: auto;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-        }
-
+        /* ── Layout ── */
         .result-grid {
             display: grid;
-            grid-template-columns: 1fr 350px;
+            grid-template-columns: 1fr 330px;
             gap: 40px;
+            align-items: start;
         }
 
+        @media (max-width: 768px) {
+            .result-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── Resume preview card ── */
         .preview-card {
             background: var(--surface);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
             border-radius: 24px;
             padding: 50px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         }
 
+        .editing .preview-card { border-color: var(--primary); }
+
+        /* ── Name + contact header block ── */
+        .resume-name-block { margin-bottom: 30px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+
+        .resume-preview-title {
+            font-size: 2rem; font-weight: 800; margin-bottom: 10px;
+        }
+
+        .resume-contact-bar {
+            display: flex; flex-wrap: wrap; gap: 18px;
+            font-size: 0.88rem; color: var(--text-dim);
+        }
+
+        .contact-chip {
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .contact-chip a { color: var(--primary); text-decoration: none; }
+        .contact-chip a:hover { text-decoration: underline; }
+
+        /* ── Sections ── */
+        .item-section { margin-bottom: 36px; }
+
+        .item-section h3 {
+            color: var(--primary);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            margin-bottom: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-section h3::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(99,102,241,0.3);
+        }
+
+        .resume-text { line-height: 1.8; color: var(--text-dim); }
+
+        /* ── Education ── */
+        .edu-item {
+            display: flex; justify-content: space-between; align-items: baseline;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .edu-item:last-child { border-bottom: none; }
+
+        .edu-degree { font-weight: 700; color: var(--text); font-size: 1rem; }
+        .edu-meta   { font-size: 0.88rem; color: var(--text-dim); margin-top: 2px; }
+
+        .edu-right   { text-align: right; }
+        .edu-year    { font-size: 0.85rem; color: var(--text-dim); }
+        .edu-grade   { font-size: 0.82rem; color: var(--primary); margin-top: 2px; }
+
+        /* ── Achievements ── */
+        .achievement-list { list-style: none; padding: 0; }
+        .achievement-list li {
+            padding: 8px 0 8px 22px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            position: relative;
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .achievement-list li:last-child { border-bottom: none; }
+        .achievement-list li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+            font-size: 0.7rem;
+            top: 11px;
+        }
+
+        /* ── Score card (sidebar) ── */
         .score-card {
             background: rgba(30, 41, 59, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
             border-radius: 24px;
-            padding: 40px;
+            padding: 36px 28px;
             text-align: center;
-            height: fit-content;
             position: sticky;
             top: 40px;
         }
 
         .score-circle {
-            width: 140px;
-            height: 140px;
+            width: 130px; height: 130px;
             border-radius: 50%;
             border: 10px solid var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 30px;
-            font-size: 2.5rem;
-            font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 2.2rem; font-weight: 800;
             color: var(--primary);
             box-shadow: 0 0 30px var(--primary-glow);
         }
 
-        .btn-download,
-        .btn-edit {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            color: white;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 700;
-            margin-top: 15px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: none;
-            text-align: center;
+        .btn-download, .btn-edit {
+            display: block; width: 100%;
+            padding: 14px; color: white; text-decoration: none;
+            border-radius: 12px; font-weight: 700;
+            margin-top: 14px; transition: all 0.3s ease;
+            cursor: pointer; border: none; text-align: center;
+            font-size: 0.9rem;
         }
 
         .btn-download {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             box-shadow: 0 10px 20px -5px var(--primary-glow);
         }
-
         .btn-download:hover {
             transform: translateY(-3px);
             box-shadow: 0 15px 30px -5px var(--primary-glow);
         }
 
-        .btn-edit {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .btn-edit { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); }
+        .btn-edit:hover { background: rgba(255,255,255,0.15); }
+
+        .score-hint {
+            font-size: 0.82rem; color: var(--text-dim);
+            line-height: 1.5; margin-top: 18px;
+            background: rgba(99,102,241,0.08);
+            border-radius: 10px; padding: 12px;
+            text-align: left;
         }
 
-        .btn-edit:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .resume-preview-title {
-            font-size: 2rem;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-weight: 800;
-        }
-
-        .item-section {
-            margin-bottom: 40px;
-        }
-
-        .item-section h3 {
-            color: var(--primary);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .skill-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .skill-tag {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            color: white;
-            font-weight: 500;
-        }
-
-        .resume-text {
-            line-height: 1.8;
-            color: var(--text-dim);
-            text-align: justify;
-        }
-
-        .project-item {
-            margin-bottom: 30px;
-            padding-left: 20px;
-            border-left: 2px solid var(--primary);
-        }
-
-        .project-title {
-            color: white;
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-        }
-
-        .bullet {
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-            color: var(--text-dim);
-        }
-
-        /* Quill adjustments */
-        .ql-container.ql-snow {
-            border: none !important;
-            font-family: inherit;
-            font-size: 1rem;
-        }
-
-        .ql-editor {
-            padding: 0 !important;
-            color: var(--text-dim);
-        }
-
-        .ql-toolbar.ql-snow {
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            background: rgba(15, 23, 42, 0.9);
+        /* ── Quill overrides ── */
+        .ql-container.ql-snow  { border: none !important; font-family: inherit; font-size: 1rem; }
+        .ql-editor              { padding: 4px 0 !important; color: var(--text-dim); }
+        .ql-toolbar.ql-snow    {
+            border: 1px solid var(--border) !important;
+            background: rgba(15,23,42,0.9);
             border-radius: 8px 8px 0 0;
             margin-bottom: 5px;
             display: none;
-            /* Hidden by default */
         }
+        .editing .ql-toolbar.ql-snow { display: block; }
 
-        .editing .ql-toolbar.ql-snow {
-            display: block;
-        }
-
-        .editing .preview-card {
-            border: 1px solid var(--primary);
-        }
-
+        /* ── Footer ── */
         footer {
-            margin-top: 60px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            padding-bottom: 30px;
+            margin-top: 60px; padding-top: 30px;
+            border-top: 1px solid var(--border);
+            text-align: center; padding-bottom: 30px;
         }
 
-        .footer-branding {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-
-        .footer-branding span {
-            color: var(--primary);
-            font-weight: 600;
-        }
+        .footer-branding { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 10px; }
+        .footer-branding span { color: var(--primary); font-weight: 600; }
 
         .contact-info {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            font-size: 0.85rem;
-            color: var(--text-dim);
+            display: flex; align-items: center; justify-content: center;
+            gap: 15px; font-size: 0.85rem; color: var(--text-dim);
         }
 
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+        .contact-item { display: flex; align-items: center; gap: 5px; }
     </style>
 </head>
 
@@ -286,28 +238,93 @@
         </div>
 
         <div class="result-grid">
-            <div class="preview-card" id="resume-container">
-                <h2 class="resume-preview-title" id="resume-name">{{ resume.name }}</h2>
 
+            <!-- ══════════════════════════════════════════════
+                 LEFT: Resume Preview (all sections editable)
+            ══════════════════════════════════════════════ -->
+            <div id="resume-container" class="preview-card">
+
+                <!-- NAME + CONTACT HEADER -->
+                <div class="resume-name-block">
+                    <h2 class="resume-preview-title" id="resume-name">{{ resume.name }}</h2>
+                    <div id="editor-contact" class="resume-contact-bar">
+                        {% if resume.location %}
+                        <span class="contact-chip">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            {{ resume.location }}
+                        </span>
+                        {% endif %}
+                        {% if resume.email %}
+                        <span class="contact-chip">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            <a href="mailto:{{ resume.email }}">{{ resume.email }}</a>
+                        </span>
+                        {% endif %}
+                        {% if resume.phone %}
+                        <span class="contact-chip">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 015.13 12.7 19.79 19.79 0 012.06 4.11 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.337 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                            {{ resume.phone }}
+                        </span>
+                        {% endif %}
+                        {% if resume.linkedin %}
+                        <span class="contact-chip">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                            <a href="{{ resume.linkedin }}" target="_blank">LinkedIn</a>
+                        </span>
+                        {% endif %}
+                        {% if resume.github %}
+                        <span class="contact-chip">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+                            <a href="{{ resume.github }}" target="_blank">GitHub</a>
+                        </span>
+                        {% endif %}
+                        {% if resume.portfolio %}
+                        <span class="contact-chip">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                            <a href="{{ resume.portfolio }}" target="_blank">Portfolio</a>
+                        </span>
+                        {% endif %}
+                    </div><!-- /editor-contact -->
+                </div>
+
+                <!-- SUMMARY -->
                 <div class="item-section">
                     <h3>Executive Summary</h3>
                     <div id="editor-summary" class="resume-text">{{ resume.summary }}</div>
                 </div>
 
+                <!-- EDUCATION (only if present) -->
+                {% if resume.education %}
+                <div class="item-section">
+                    <h3>Educational Qualifications</h3>
+                    <div id="editor-education" class="resume-text">
+                        {% for edu in resume.education %}
+                        <div class="edu-item">
+                            <div>
+                                <div class="edu-degree">{{ edu.degree }}</div>
+                                <div class="edu-meta">{{ edu.institution }}</div>
+                            </div>
+                            <div class="edu-right">
+                                <div class="edu-year">{{ edu.year }}</div>
+                                {% if edu.grade %}<div class="edu-grade">{{ edu.grade }}</div>{% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- TECHNICAL SKILLS -->
                 <div class="item-section">
                     <h3>Core Technical Competencies</h3>
                     <div id="editor-skills" class="resume-text">
                         {% for category, items in resume.skills.items() %}
                         {% if items %}
                         <div style="margin-bottom: 12px;">
-                            <strong
-                                style="color: var(--text); font-size: 0.95rem; display: block; margin-bottom: 5px;">{{
-                                category }}:</strong>
+                            <strong style="color: var(--text); font-size: 0.95rem; display: block; margin-bottom: 5px;">{{ category }}:</strong>
                             <div style="margin-top: 5px;">
                                 {% for skill in items %}
-                                <span
-                                    style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2px 10px; border-radius: 4px; font-size: 0.85rem; display: inline-block; margin-right: 5px; margin-bottom: 5px; color: var(--text-dim);">{{
-                                    skill }}</span>
+                                <span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:2px 10px;border-radius:4px;font-size:0.85rem;display:inline-block;margin-right:5px;margin-bottom:5px;color:var(--text-dim);">{{ skill }}</span>
                                 {% endfor %}
                             </div>
                         </div>
@@ -316,122 +333,150 @@
                     </div>
                 </div>
 
+                <!-- ACHIEVEMENTS (only if present) -->
+                {% if resume.achievements %}
                 <div class="item-section">
-                    <h3>Strategic Impact & Experience</h3>
+                    <h3>Achievements &amp; Certifications</h3>
+                    <div id="editor-achievements" class="resume-text">
+                        <ul class="achievement-list">
+                            {% for item in resume.achievements %}
+                            <li>{{ item }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- EXPERIENCE / PROJECTS -->
+                <div class="item-section">
+                    <h3>Strategic Impact &amp; Projects</h3>
                     <div id="editor-experience" class="resume-text">
                         {% for exp in resume.experience %}
-                        <div
-                            style="margin-bottom: 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 15px;">
-                            <div style="margin-bottom: 8px;">
-                                <span
-                                    style="font-weight: 700; color: var(--text); font-size: 1.15rem; margin-right: 15px;">{{
-                                    exp.title }}</span>
+                        <div style="margin-bottom:25px;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:15px;">
+                            <div style="margin-bottom:8px;">
+                                <span style="font-weight:700;color:var(--text);font-size:1.1rem;margin-right:15px;">{{ exp.title }}</span>
                                 {% if exp.url %}
-                                <a href="{{ exp.url }}" target="_blank"
-                                    style="color: var(--primary); font-size: 0.85rem; text-decoration: none;">View
-                                    Project ↗</a>
+                                <a href="{{ exp.url }}" target="_blank" style="color:var(--primary);font-size:0.85rem;text-decoration:none;">View Project ↗</a>
                                 {% endif %}
                             </div>
-                            <ul style="margin-left: 20px; list-style-type: disc;">
+                            <ul style="margin-left:20px;list-style-type:disc;">
                                 {% for bullet in exp.bullets %}
-                                <li style="margin-bottom: 6px; color: var(--text-dim);">{{ bullet }}</li>
+                                <li style="margin-bottom:6px;color:var(--text-dim);">{{ bullet }}</li>
                                 {% endfor %}
                             </ul>
                         </div>
                         {% endfor %}
                     </div>
                 </div>
-            </div>
 
+            </div><!-- /preview-card -->
+
+            <!-- ══════════════════════════════════════════════
+                 RIGHT: Score card + actions
+            ══════════════════════════════════════════════ -->
             <div class="score-card">
                 <div class="score-circle">{{ score }}%</div>
-                <h3 style="margin-bottom: 15px; font-size: 1.2rem;">ATS Optimization Score</h3>
-                <p style="font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 20px;">
-                    Your profile has been architected for maximum visibility. Our NLP engine confirms a <strong>{{ score
-                        }}% alignment</strong> with the target job requirements.
+                <h3 style="margin-bottom:10px;font-size:1.15rem;">ATS Optimization Score</h3>
+                <p style="font-size:0.88rem;color:var(--text-dim);line-height:1.6;">
+                    Your profile has been architected for maximum visibility with a
+                    <strong>{{ score }}% alignment</strong> to the target role.
                 </p>
 
-                <button onclick="toggleEdit()" class="btn-edit" id="edit-btn">EDIT CONTENT</button>
+                <button onclick="toggleEdit()" class="btn-edit" id="edit-btn">✏ EDIT RESUME</button>
 
                 <form id="download-form" action="/download_custom" method="POST">
-                    <input type="hidden" name="name" value="{{ resume.name }}">
-                    <input type="hidden" name="summary_html" id="summary_html">
-                    <input type="hidden" name="skills_html" id="skills_html">
-                    <input type="hidden" name="experience_html" id="experience_html">
-                    <button type="submit" class="btn-download" onclick="prepareDownload()">GENERATE EXECUTIVE
-                        PDF</button>
+                    <input type="hidden" name="name"               value="{{ resume.name }}">
+                    <input type="hidden" name="contact_html"       id="contact_html">
+                    <input type="hidden" name="summary_html"       id="summary_html">
+                    <input type="hidden" name="education_html"     id="education_html">
+                    <input type="hidden" name="skills_html"        id="skills_html">
+                    <input type="hidden" name="achievements_html"  id="achievements_html">
+                    <input type="hidden" name="experience_html"    id="experience_html">
+                    <button type="submit" class="btn-download" onclick="prepareDownload()">⬇ GENERATE PDF</button>
                 </form>
+
+                <div class="score-hint">
+                    <strong style="color:var(--text);">💡 Tips</strong><br>
+                    Click <em>Edit Resume</em> to fine-tune any section inline — then generate the PDF with your edits preserved.
+                </div>
             </div>
-        </div>
+
+        </div><!-- /result-grid -->
 
         <footer>
-            <div class="footer-branding">
-                Powered by <span>Acadeno Technologies</span>
-            </div>
+            <div class="footer-branding">Powered by <span>Acadeno Technologies</span></div>
             <div class="contact-info">
                 <div class="contact-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path
-                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                        </path>
-                    </svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
                     9447933266
                 </div>
             </div>
         </footer>
-    </div>
+    </div><!-- /container -->
 
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
         const toolbarOptions = [
             ['bold', 'italic', 'underline'],
-            [{ 'size': ['small', false, 'large', 'huge'] }],
-            [{ 'font': [] }],
-            [{ 'color': [] }, { 'background': [] }],
+            [{ 'size': ['small', false, 'large'] }],
+            [{ 'color': [] }],
             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
             ['clean']
         ];
 
-        let summaryQuill, skillsQuill, experienceQuill;
+        // Track which Quill editors we've created
+        let quills = {};
         let isEditing = false;
+
+        // Section IDs that always exist
+        const ALWAYS_SECTIONS = ['editor-summary', 'editor-skills', 'editor-experience'];
+        // Optional sections (exist only if data is present)
+        const OPTIONAL_SECTIONS = ['editor-education', 'editor-achievements'];
 
         function toggleEdit() {
             const container = document.getElementById('resume-container');
-            const editBtn = document.getElementById('edit-btn');
+            const editBtn   = document.getElementById('edit-btn');
 
             if (!isEditing) {
-                // Initialize Quill
-                summaryQuill = new Quill('#editor-summary', { theme: 'snow', modules: { toolbar: toolbarOptions } });
-                skillsQuill = new Quill('#editor-skills', { theme: 'snow', modules: { toolbar: toolbarOptions } });
-                experienceQuill = new Quill('#editor-experience', { theme: 'snow', modules: { toolbar: toolbarOptions } });
-
+                // Create Quill editors for all present sections
+                const allSections = [...ALWAYS_SECTIONS, ...OPTIONAL_SECTIONS];
+                allSections.forEach(function(id) {
+                    const el = document.getElementById(id);
+                    if (el && !quills[id]) {
+                        quills[id] = new Quill('#' + id, {
+                            theme: 'snow',
+                            modules: { toolbar: toolbarOptions }
+                        });
+                    }
+                });
                 container.classList.add('editing');
-                editBtn.innerText = 'PREVIEW MODE';
+                editBtn.innerText = '👁 PREVIEW MODE';
                 isEditing = true;
             } else {
-                // Destroy/Disable Quill (visually)
-                // In Quill 1.3, we can't easily "destroy", so we'll just toggle the UI class
                 container.classList.remove('editing');
-                editBtn.innerText = 'EDIT CONTENT';
+                editBtn.innerText = '✏ EDIT RESUME';
                 isEditing = false;
-
-                // Remove toolbars manually if they persist
-                document.querySelectorAll('.ql-toolbar').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.ql-toolbar').forEach(function(el) {
+                    el.style.display = 'none';
+                });
             }
         }
 
-        function prepareDownload() {
-            if (isEditing) {
-                document.getElementById('summary_html').value = summaryQuill.root.innerHTML;
-                document.getElementById('skills_html').value = skillsQuill.root.innerHTML;
-                document.getElementById('experience_html').value = experienceQuill.root.innerHTML;
-            } else {
-                // If never edited, use the static content
-                document.getElementById('summary_html').value = document.getElementById('editor-summary').innerHTML;
-                document.getElementById('skills_html').value = document.getElementById('editor-skills').innerHTML;
-                document.getElementById('experience_html').value = document.getElementById('editor-experience').innerHTML;
+        function getSectionHTML(id) {
+            if (quills[id]) {
+                return quills[id].root.innerHTML;
             }
+            const el = document.getElementById(id);
+            return el ? el.innerHTML : '';
+        }
+
+        function prepareDownload() {
+            document.getElementById('contact_html').value      = document.getElementById('editor-contact').innerHTML;
+            document.getElementById('summary_html').value      = getSectionHTML('editor-summary');
+            document.getElementById('skills_html').value       = getSectionHTML('editor-skills');
+            document.getElementById('experience_html').value   = getSectionHTML('editor-experience');
+            document.getElementById('education_html').value    = getSectionHTML('editor-education');
+            document.getElementById('achievements_html').value = getSectionHTML('editor-achievements');
         }
     </script>
 </body>

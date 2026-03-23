@@ -107,7 +107,10 @@
 
         input[type="text"],
         input[type="url"],
-        textarea {
+        input[type="email"],
+        input[type="tel"],
+        textarea,
+        select {
             width: 100%;
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -119,7 +122,8 @@
         }
 
         input:focus,
-        textarea:focus {
+        textarea:focus,
+        select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px var(--primary-glow);
@@ -129,6 +133,10 @@
         textarea {
             min-height: 150px;
             resize: vertical;
+        }
+
+        textarea.short {
+            min-height: 80px;
         }
 
         .btn-submit {
@@ -156,40 +164,144 @@
             transform: translateY(0);
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
+        /* ── Personal Details Accordion ── */
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 18px 22px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(99, 102, 241, 0.08);
+            margin-bottom: 0;
+            transition: background 0.25s;
+            user-select: none;
+        }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
+        .accordion-header:hover {
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        .accordion-header .acc-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+
+        .accordion-header .acc-badge {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-left: 10px;
+        }
+
+        .accordion-header .acc-arrow {
+            transition: transform 0.3s;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .accordion-header.open .acc-arrow {
+            transform: rotate(180deg);
+        }
+
+        .accordion-body {
+            display: none;
+            padding: 28px 0 10px;
+        }
+
+        .accordion-body.open {
+            display: block;
+        }
+
+        /* Two-column grid for small inputs */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
             }
+        }
+
+        .section-divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin: 28px 0;
+        }
+
+        .sub-section-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+        }
+
+        /* Education entries */
+        .edu-entry {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .btn-remove-edu {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: #f43f5e;
+            border-radius: 8px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-remove-edu:hover {
+            background: rgba(244, 63, 94, 0.3);
+        }
+
+        .btn-add-edu {
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px dashed rgba(99, 102, 241, 0.5);
+            color: var(--primary);
+            border-radius: 10px;
+            padding: 12px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.25s;
+            margin-top: 4px;
+        }
+
+        .btn-add-edu:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0);    }
         }
 
         @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-30px); }
+            to   { opacity: 1; transform: translateY(0);     }
         }
 
         @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: scale(0.95); }
+            to   { opacity: 1; transform: scale(1);    }
         }
 
         .features {
@@ -200,20 +312,11 @@
             text-align: center;
         }
 
-        .feature-item {
-            padding: 20px;
-        }
+        .feature-item { padding: 20px; }
 
-        .feature-item h3 {
-            font-size: 1rem;
-            margin-bottom: 8px;
-            color: var(--text);
-        }
+        .feature-item h3 { font-size: 1rem; margin-bottom: 8px; color: var(--text); }
 
-        .feature-item p {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-        }
+        .feature-item p { font-size: 0.85rem; color: var(--text-dim); }
 
         footer {
             margin-top: 80px;
@@ -223,16 +326,9 @@
             padding-bottom: 40px;
         }
 
-        .footer-branding {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
+        .footer-branding { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 10px; }
 
-        .footer-branding span {
-            color: var(--primary);
-            font-weight: 600;
-        }
+        .footer-branding span { color: var(--primary); font-weight: 600; }
 
         .contact-info {
             display: flex;
@@ -243,17 +339,9 @@
             color: var(--text-dim);
         }
 
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+        .contact-item { display: flex; align-items: center; gap: 5px; }
 
-        .nav-logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+        .nav-logo-container { display: flex; align-items: center; gap: 15px; }
 
         .nav-logo-img {
             height: 100px;
@@ -262,9 +350,7 @@
             transition: transform 0.3s ease;
         }
 
-        .nav-logo-img:hover {
-            transform: scale(1.05);
-        }
+        .nav-logo-img:hover { transform: scale(1.05); }
 
         .header-logo {
             display: block;
@@ -274,6 +360,9 @@
             animation: fadeInDown 1s ease-out;
             filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.3));
         }
+
+        /* placeholder colour fix */
+        input::placeholder, textarea::placeholder { color: rgba(148, 163, 184, 0.5); }
     </style>
 </head>
 
@@ -293,17 +382,88 @@
 
         <main class="main-card">
             <form id="resume-form" action="/" method="POST">
-                <input type="hidden" id="github_data" name="github_data">
+                <!-- Hidden inputs -->
+                <input type="hidden" id="github_data"     name="github_data">
+                <input type="hidden" id="education_data"  name="education_data">
+
+                <!-- ── GitHub & Portfolio ── -->
                 <div class="form-group">
                     <label for="github">GitHub Profile Username</label>
                     <input type="text" id="github" name="github" placeholder="e.g., torvalds" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="portfolio">Portfolio URL (Optional)</label>
+                    <label for="portfolio">Portfolio URL <span style="font-weight:400;text-transform:none;color:var(--text-dim)">(Optional)</span></label>
                     <input type="url" id="portfolio" name="portfolio" placeholder="https://yourportfolio.com">
                 </div>
 
+                <!-- ── Personal Details Accordion ── -->
+                <div class="form-group" style="margin-bottom:28px;">
+                    <div class="accordion-header" id="acc-toggle" onclick="toggleAccordion()">
+                        <span>
+                            <span class="acc-title">Personal Details</span>
+                            <span class="acc-badge">(Education · Skills · Achievements · Contact)</span>
+                        </span>
+                        <span class="acc-arrow" id="acc-arrow">▼</span>
+                    </div>
+
+                    <div class="accordion-body" id="acc-body"
+                         style="padding: 28px 2px 10px; border-left: 2px solid rgba(99,102,241,0.25); margin-left: 2px; padding-left: 22px;">
+
+                        <!-- Contact details -->
+                        <div class="sub-section-label">Contact Information</div>
+                        <div class="form-row" style="margin-bottom:20px;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label for="full_name">Full Name Override</label>
+                                <input type="text" id="full_name" name="full_name" placeholder="Leave blank to use GitHub name">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" placeholder="you@example.com">
+                            </div>
+                        </div>
+
+                        <div class="form-row" style="margin-bottom:20px;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" placeholder="+91 9XXXXXXXXX">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label for="linkedin">LinkedIn URL</label>
+                                <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/you">
+                            </div>
+                        </div>
+
+                        <hr class="section-divider">
+
+                        <!-- Education -->
+                        <div class="sub-section-label">Educational Qualifications</div>
+                        <div id="edu-container"></div>
+                        <button type="button" class="btn-add-edu" onclick="addEduEntry()">+ Add Education</button>
+
+                        <hr class="section-divider">
+
+                        <!-- Technical skills -->
+                        <div class="sub-section-label">Additional Technical Skills</div>
+                        <div class="form-group" style="margin-bottom:8px;">
+                            <label for="manual_skills" style="text-transform:none;letter-spacing:0;font-size:0.82rem;color:var(--text-dim)">Comma-separated skills to include (supplements auto-detected ones)</label>
+                            <input type="text" id="manual_skills" name="manual_skills"
+                                   placeholder="e.g., Redis, Kubernetes, GraphQL, Figma">
+                        </div>
+
+                        <hr class="section-divider">
+
+                        <!-- Achievements -->
+                        <div class="sub-section-label">Achievements &amp; Certifications</div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="achievements" style="text-transform:none;letter-spacing:0;font-size:0.82rem;color:var(--text-dim)">One achievement per line</label>
+                            <textarea id="achievements" name="achievements" class="short"
+                                      placeholder="AWS Certified Developer – Associate (2024)&#10;Winner – National Hackathon 2023&#10;Published paper in IEEE on Deep Learning"></textarea>
+                        </div>
+                    </div><!-- /accordion-body -->
+                </div>
+
+                <!-- ── Job Description ── -->
                 <div class="form-group">
                     <label for="job_description">Job Description</label>
                     <textarea id="job_description" name="job_description"
@@ -347,19 +507,88 @@
             </div>
         </footer>
     </div>
+
     <script>
+        /* ── Accordion ── */
+        function toggleAccordion() {
+            const body   = document.getElementById('acc-body');
+            const toggle = document.getElementById('acc-toggle');
+            const arrow  = document.getElementById('acc-arrow');
+            const isOpen = body.classList.contains('open');
+            body.classList.toggle('open', !isOpen);
+            toggle.classList.toggle('open', !isOpen);
+        }
+
+        /* ── Education entries ── */
+        let eduCount = 0;
+
+        function addEduEntry(data) {
+            eduCount++;
+            const id  = `edu_${eduCount}`;
+            const d   = data || {};
+            const div = document.createElement('div');
+            div.className = 'edu-entry';
+            div.id = id;
+            div.innerHTML = `
+                <button type="button" class="btn-remove-edu" onclick="removeEdu('${id}')">✕ Remove</button>
+                <div class="form-row" style="margin-bottom:14px;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label style="color:var(--text-dim);text-transform:none;font-size:0.8rem;letter-spacing:0;">Degree / Qualification</label>
+                        <input type="text" class="edu-degree" placeholder="B.Tech Computer Science" value="${d.degree||''}">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label style="color:var(--text-dim);text-transform:none;font-size:0.8rem;letter-spacing:0;">Institution</label>
+                        <input type="text" class="edu-institution" placeholder="Kerala University" value="${d.institution||''}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label style="color:var(--text-dim);text-transform:none;font-size:0.8rem;letter-spacing:0;">Year / Duration</label>
+                        <input type="text" class="edu-year" placeholder="2020 – 2024" value="${d.year||''}">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label style="color:var(--text-dim);text-transform:none;font-size:0.8rem;letter-spacing:0;">Grade / CGPA</label>
+                        <input type="text" class="edu-grade" placeholder="8.5 CGPA / First Class" value="${d.grade||''}">
+                    </div>
+                </div>`;
+            document.getElementById('edu-container').appendChild(div);
+        }
+
+        function removeEdu(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        /* ── Collect education JSON before submit ── */
+        function collectEducation() {
+            const entries = document.querySelectorAll('.edu-entry');
+            const list = [];
+            entries.forEach(function(e) {
+                const degree      = e.querySelector('.edu-degree').value.trim();
+                const institution = e.querySelector('.edu-institution').value.trim();
+                const year        = e.querySelector('.edu-year').value.trim();
+                const grade       = e.querySelector('.edu-grade').value.trim();
+                if (degree || institution) {
+                    list.push({ degree, institution, year, grade });
+                }
+            });
+            document.getElementById('education_data').value = JSON.stringify(list);
+        }
+
+        /* ── GitHub client-side fetch ── */
         document.getElementById('resume-form').addEventListener('submit', async function (e) {
             e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            const originalText = btn.innerText;
-            btn.innerText = "FETCHING GITHUB PULSE...";
-            btn.disabled = true;
+            collectEducation();
 
-            const username = document.getElementById('github').value.trim().split('/').pop();
-            const githubDataInput = document.getElementById('github_data');
+            const btn          = document.getElementById('submit-btn');
+            const originalText = btn.innerText;
+            btn.innerText      = "FETCHING GITHUB PULSE...";
+            btn.disabled       = true;
+
+            const username         = document.getElementById('github').value.trim().split('/').pop();
+            const githubDataInput  = document.getElementById('github_data');
 
             try {
-                // Fetch from client side to bypass Render server IP blocks
                 const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=60&sort=updated`);
                 if (response.ok) {
                     const repos = await response.json();
@@ -368,10 +597,9 @@
                         .slice(0, 8)
                         .map(r => ({
                             name: r.name.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-                            url: r.html_url
+                            url:  r.html_url
                         }));
 
-                    // Also try to get real name
                     const profileRes = await fetch(`https://api.github.com/users/${username}`);
                     let realName = username;
                     let location = "Global";
@@ -382,7 +610,7 @@
                     }
 
                     githubDataInput.value = JSON.stringify({
-                        name: realName,
+                        name:     realName,
                         location: location,
                         projects: filteredRepos
                     });

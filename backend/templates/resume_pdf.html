@@ -7,26 +7,26 @@
     <style>
         @page {
             size: A4;
-            margin: 15mm 15mm;
+            margin: 15mm 18mm;
         }
 
         body {
             font-family: 'Times New Roman', Times, serif;
-            /* Classic professional font */
             color: #1a1a1a;
-            line-height: 1.4;
+            line-height: 1.45;
             margin: 0;
             padding: 0;
             font-size: 10pt;
         }
 
-        .container {
-            width: 100%;
-        }
+        .container { width: 100%; }
 
+        /* ── Header ── */
         .header {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #000;
         }
 
         .name {
@@ -34,93 +34,98 @@
             font-weight: bold;
             color: #000;
             text-transform: uppercase;
-            margin-bottom: 5px;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
         }
 
-        .contact {
-            font-size: 10pt;
+        .contact-line {
+            font-size: 9pt;
             color: #333;
-            border-bottom: 1px solid #333;
-            padding-bottom: 8px;
         }
 
+        .contact-sep { margin: 0 5px; color: #999; }
+
+        /* ── Section ── */
         .section {
             margin-top: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .section-title {
-            font-size: 12pt;
+            font-size: 11pt;
             font-weight: bold;
             color: #000;
-            border-bottom: 1px solid #000;
-            margin-bottom: 8px;
+            border-bottom: 1.5px solid #000;
+            margin-bottom: 7px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-bottom: 2px;
         }
 
+        /* ── Summary / Objective ── */
         .summary {
             text-align: justify;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            line-height: 1.5;
         }
 
-        .experience-item {
-            margin-bottom: 12px;
-        }
+        /* ── Education ── */
+        .edu-table { width: 100%; border-collapse: collapse; }
 
-        .project-table {
-            width: 100%;
-            border-bottom: 0.5px solid #eee;
-            margin-bottom: 3px;
-        }
+        .edu-table tr td { padding: 3px 0; vertical-align: top; }
 
-        .project-title {
-            font-weight: bold;
-            font-size: 11pt;
-            text-align: left;
-        }
+        .edu-degree     { font-weight: bold; font-size: 10pt; }
+        .edu-institution { font-size: 9.5pt; color: #444; }
+        .edu-right-cell  { text-align: right; width: 35%; }
+        .edu-year        { font-size: 9pt; color: #555; }
+        .edu-grade       { font-size: 9pt; color: #000; font-style: italic; }
 
-        .project-link {
-            text-align: right;
-            font-size: 8pt;
-            color: #666;
-        }
+        /* ── Skills ── */
+        .skills-table { width: 100%; border-collapse: collapse; }
+        .skill-category { width: 140px; font-weight: bold; vertical-align: top; padding: 2px 0; font-size: 10pt; }
+        .skill-items    { padding: 2px 0; font-size: 10pt; }
 
-        .bullet-list {
-            margin-left: 20px;
-            padding: 0;
-        }
+        /* ── Experience ── */
+        .experience-item { margin-bottom: 10px; }
 
-        .bullet-list li {
-            margin-bottom: 2px;
-            text-align: justify;
-        }
+        .project-table { width: 100%; border-collapse: collapse; }
+        .project-title  { font-weight: bold; font-size: 10.5pt; text-align: left; padding-bottom: 2px; }
+        .project-link   { text-align: right; font-size: 8pt; color: #555; }
 
-        .skills-table {
-            width: 100%;
-        }
+        .bullet-list { margin-left: 18px; padding: 0; }
+        .bullet-list li { margin-bottom: 2px; text-align: justify; font-size: 9.5pt; }
 
-        .skill-category {
-            width: 150px;
-            font-weight: bold;
-            vertical-align: top;
-            padding-bottom: 4px;
-        }
-
-        .skill-items {
-            padding-bottom: 4px;
-        }
+        /* ── Achievements ── */
+        .achievement-list { margin-left: 18px; padding: 0; }
+        .achievement-list li { margin-bottom: 3px; font-size: 9.5pt; }
     </style>
 </head>
 
 <body>
     <div class="container">
+
+        <!-- ══ HEADER ══ -->
         <div class="header">
             <div class="name">{{ resume.name }}</div>
-            <div class="contact">
-                {{ resume.location }} | GitHub: {{ resume.github }}
+
+            {% if custom_contact %}
+            <!-- Edited contact bar from result page — strip tags, render inline for PDF -->
+            <div class="contact-line">{{ custom_contact | striptags | replace('\n', ' ') }}</div>
+            {% else %}
+            <div class="contact-line">
+                {% set parts = [] %}
+                {% if resume.location  %}{% set _ = parts.append(resume.location)  %}{% endif %}
+                {% if resume.email     %}{% set _ = parts.append(resume.email)     %}{% endif %}
+                {% if resume.phone     %}{% set _ = parts.append(resume.phone)     %}{% endif %}
+                {% if resume.linkedin  %}{% set _ = parts.append(resume.linkedin)  %}{% endif %}
+                {% if resume.github    %}{% set _ = parts.append(resume.github)    %}{% endif %}
+                {% if resume.portfolio %}{% set _ = parts.append(resume.portfolio) %}{% endif %}
+                {{ parts | join(' | ') }}
             </div>
+            {% endif %}
         </div>
 
+        <!-- ══ PROFESSIONAL SUMMARY ══ -->
         <div class="section">
             <div class="section-title">Professional Summary</div>
             <div class="summary">
@@ -132,47 +137,80 @@
             </div>
         </div>
 
+        <!-- ══ EDUCATION ══ -->
+        {% set has_education = (resume.education and resume.education | length > 0) or custom_education %}
+        {% if has_education %}
+        <div class="section">
+            <div class="section-title">Educational Qualifications</div>
+            {% if custom_education %}
+            <div>{{ custom_education | safe }}</div>
+            {% else %}
+            <table class="edu-table">
+                {% for edu in resume.education %}
+                <tr>
+                    <td>
+                        <div class="edu-degree">{{ edu.degree }}</div>
+                        {% if edu.institution %}<div class="edu-institution">{{ edu.institution }}</div>{% endif %}
+                    </td>
+                    <td class="edu-right-cell">
+                        {% if edu.year  %}<div class="edu-year">{{ edu.year }}</div>{% endif %}
+                        {% if edu.grade %}<div class="edu-grade">{{ edu.grade }}</div>{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- ══ TECHNICAL SKILLS ══ -->
         <div class="section">
             <div class="section-title">Core Technical Competencies</div>
-            <div class="skills-container">
-                {% if custom_skills %}
-                <div class="skills-content">{{ custom_skills | safe }}</div>
-                {% else %}
-                <table class="skills-table">
-                    {% for category, items in resume.skills.items() %}
-                    {% if items %}
-                    <tr>
-                        <td class="skill-category">{{ category }}:</td>
-                        <td class="skill-items">{{ items | join(', ') }}</td>
-                    </tr>
-                    {% endif %}
-                    {% endfor %}
-                </table>
+            {% if custom_skills %}
+            <div>{{ custom_skills | safe }}</div>
+            {% else %}
+            <table class="skills-table">
+                {% for category, items in resume.skills.items() %}
+                {% if items %}
+                <tr>
+                    <td class="skill-category">{{ category }}:</td>
+                    <td class="skill-items">{{ items | join(', ') }}</td>
+                </tr>
                 {% endif %}
-            </div>
+                {% endfor %}
+            </table>
+            {% endif %}
         </div>
 
+        <!-- ══ ACHIEVEMENTS ══ -->
+        {% set has_achievements = (resume.achievements and resume.achievements | length > 0) or custom_achievements %}
+        {% if has_achievements %}
         <div class="section">
-            <div class="section-title">Professional Experience & Projects</div>
+            <div class="section-title">Achievements &amp; Certifications</div>
+            {% if custom_achievements %}
+            <div>{{ custom_achievements | safe }}</div>
+            {% else %}
+            <ul class="achievement-list">
+                {% for item in resume.achievements %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- ══ EXPERIENCE / PROJECTS ══ -->
+        <div class="section">
+            <div class="section-title">Professional Experience &amp; Projects</div>
             {% if custom_experience %}
-            <div class="experience-content">{{ custom_experience | safe }}</div>
+            <div>{{ custom_experience | safe }}</div>
             {% else %}
             {% for exp in resume.experience %}
             <div class="experience-item">
                 <table class="project-table">
                     <tr>
-                        <td class="project-title">
-                            {% if exp.url %}
-                            {{ exp.title }}
-                            {% else %}
-                            {{ exp.title }}
-                            {% endif %}
-                        </td>
-                        <td class="project-link">
-                            {% if exp.url %}
-                            [{{ exp.url }}]
-                            {% endif %}
-                        </td>
+                        <td class="project-title">{{ exp.title }}</td>
+                        <td class="project-link">{% if exp.url %}{{ exp.url }}{% endif %}</td>
                     </tr>
                 </table>
                 <ul class="bullet-list">
@@ -185,10 +223,12 @@
             {% endif %}
         </div>
 
+        <!-- ══ OBJECTIVE ══ -->
         <div class="section">
-            <div class="section-title">Career Narrative & Objective</div>
+            <div class="section-title">Career Objective</div>
             <div class="summary">{{ resume.objective }}</div>
         </div>
+
     </div>
 </body>
 

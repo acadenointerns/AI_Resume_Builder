@@ -11,9 +11,9 @@ def generate_impact_bullets(project_name, skills):
         display_name = display_name.replace("Alzeimer", "Alzheimer's")
 
     metrics = [
-        f"{random.randint(15, 45)}%", 
-        f"{random.randint(2, 10)}x", 
-        f"{random.randint(50, 500)}ms", 
+        f"{random.randint(15, 45)}%",
+        f"{random.randint(2, 10)}x",
+        f"{random.randint(50, 500)}ms",
         f"${random.randint(5, 50)}k",
         "over 1,000+",
         "30% faster"
@@ -28,26 +28,43 @@ def generate_impact_bullets(project_name, skills):
         f"Directed the technical roadmap for the project, utilizing {', '.join(skills[:3])} to solve complex computational challenges for {random.choice(metrics[4:5])} users.",
         f"Engineered a high-performance module using {skills[0] if skills else 'optimized algorithms'}, resulting in a {random.choice(metrics)} increase in operational efficiency."
     ]
-    
+
     # Ensure variety and avoid repeating project name in every bullet
     selected = random.sample(templates, min(3, len(templates)))
     return selected
 
-def generate_resume(profile, job_desc):
+
+def generate_resume(profile, job_desc, personal_details=None):
+    if personal_details is None:
+        personal_details = {}
+
     jd_keywords = extract_keywords(job_desc)
-    raw_skills = list(dict.fromkeys(jd_keywords[:20]))
+    raw_skills  = list(dict.fromkeys(jd_keywords[:20]))
+
+    # Merge manually-supplied skills (de-duplicate, preserving order)
+    manual_skills = personal_details.get("manual_skills", [])
+    for ms in manual_skills:
+        if ms not in raw_skills:
+            raw_skills.append(ms)
 
     # Categorize skills for professional look
-    languages = [s for s in raw_skills if s.lower() in ["python", "javascript", "typescript", "java", "cpp", "c++", "c#", "go", "rust", "php", "sql", "html", "css", "kotlin", "swift"]]
-    
-    framework_list = ["react", "next.js", "node.js", "django", "flask", "fastapi", "spring", "vue", "angular", "tensorflow", "pytorch", "keras", "laravel", "express", "flutter", "react native", "bootstrap", "tailwind", "jquery"]
+    languages = [s for s in raw_skills if s.lower() in [
+        "python", "javascript", "typescript", "java", "cpp", "c++", "c#",
+        "go", "rust", "php", "sql", "html", "css", "kotlin", "swift", "r", "scala"
+    ]]
+
+    framework_list = [
+        "react", "next.js", "node.js", "django", "flask", "fastapi", "spring",
+        "vue", "angular", "tensorflow", "pytorch", "keras", "laravel", "express",
+        "flutter", "react native", "bootstrap", "tailwind", "jquery", "svelte",
+        "nuxt", "fastify", "nestjs", "redux", "graphql"
+    ]
     frameworks = [s for s in raw_skills if s.lower() in framework_list]
-    
+
     # Ensure frameworks isn't empty if we have general technical skills
     if not frameworks and raw_skills:
-        # Pick top skills that aren't languages
         frameworks = [s for s in raw_skills if s not in languages][:5]
-    
+
     # Final fallback if still empty (professional defaults)
     if not frameworks:
         frameworks = ["React", "Node.js", "Git"]
@@ -57,24 +74,24 @@ def generate_resume(profile, job_desc):
         tools = ["Docker", "AWS", "CI/CD", "Agile"]
 
     skills_categorized = {
-        "Languages": languages if languages else ["Python", "JavaScript", "SQL"],
-        "Frameworks & Libraries": frameworks,
-        "Tools & Platforms": tools
+        "Languages":               languages  if languages  else ["Python", "JavaScript", "SQL"],
+        "Frameworks & Libraries":  frameworks,
+        "Tools & Platforms":       tools
     }
 
     experience = []
     for p in profile["projects"]:
-        project_name = p["name"]
-        project_url = p["url"]
-        
+        project_name  = p["name"]
+        project_url   = p["url"]
+
         # Use simple project skills if not explicitly found in JD
         project_skills = [s for s in raw_skills if s.lower() in project_name.lower()]
         if not project_skills:
             project_skills = random.sample(raw_skills, min(3, len(raw_skills))) if raw_skills else ["Software Engineering", "System Design"]
-            
+
         experience.append({
-            "title": project_name,
-            "url": project_url,
+            "title":   project_name,
+            "url":     project_url,
             "bullets": generate_impact_bullets(project_name, project_skills)
         })
 
@@ -92,11 +109,20 @@ def generate_resume(profile, job_desc):
     )
 
     return {
-        "name": profile["name"],
-        "location": profile["location"],
-        "github": profile["github"],
-        "summary": summary,
-        "skills": skills_categorized,
-        "experience": experience,
-        "objective": objective
+        "name":         profile["name"],
+        "location":     profile.get("location", ""),
+        "github":       profile.get("github", ""),
+        "portfolio":    profile.get("portfolio", ""),
+        # Personal contact details
+        "email":        personal_details.get("email", ""),
+        "phone":        personal_details.get("phone", ""),
+        "linkedin":     personal_details.get("linkedin", ""),
+        # Sections
+        "summary":      summary,
+        "skills":       skills_categorized,
+        "experience":   experience,
+        "objective":    objective,
+        # New sections
+        "education":    personal_details.get("education", []),
+        "achievements": personal_details.get("achievements", []),
     }
