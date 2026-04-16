@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, jsonify
 from github_fetcher import fetch_github_profile
 from resume_engine import generate_resume
 from ats_scoring import score_resume
+from sheets_logger import log_student
 import os, time, json
 
 app = Flask(__name__)
@@ -97,6 +98,11 @@ def index():
 
         latest_resume = resume
         latest_ats    = ats_score
+
+        # ── Log student details to Google Sheets ──────────────────────
+        github_username = github.strip().split("/")[-1]
+        log_student(personal_details, github_username)
+        # ──────────────────────────────────────────────────────────────
 
         return render_template("result.html", resume=resume, score=ats_score)
 
@@ -202,6 +208,51 @@ def download_custom():
         )
     except Exception as e:
         return f"PDF Error: {str(e)}", 500
+
+
+@app.route("/admin/submissions")
+def admin_submissions():
+    """
+    Read-only admin view of all logged student submissions from Google Sheets.
+    Returns JSON — protect this route with a secret key in production!
+
+    Usage: GET /admin/submissions?key=YOUR_ADMIN_KEY
+    Set the env-var ADMIN_KEY to enable protection (leave unset to disable).
+    """
+    admin_key = os.environ.get("ADMIN_KEY", "")
+    if admin_key and request.args.get("key") != admin_key:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    _DEFAULT_SHEET_ID = "1p4djLv3YYCX8DmHuIvHb8zhVKTPih9tR80ihGiWOI1Y"
+    sheet_id = os.environ.get("SHEET_ID", _DEFAULT_SHEET_ID).strip()
+
+    try:
+        import gspread
+        from google.oauth2.service_account import Credentials
+        import json as _json
+
+        scopes = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive",
+        ]
+
+        creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+        if creds_json:
+            creds = Credentials.from_service_account_info(
+                _json.loads(creds_json), scopes=scopes)
+        else:
+            base_dir   = os.path.dirname(os.path.abspath(__file__))
+            creds_file = os.path.join(base_dir, "credentials.json")
+            creds = Credentials.from_service_account_file(creds_file, scopes=scopes)
+
+        client      = gspread.authorize(creds)
+        spreadsheet = client.open_by_key(sheet_id)
+        ws          = spreadsheet.worksheet("Student Submissions")
+        rows        = ws.get_all_records()
+        return jsonify({"count": len(rows), "submissions": rows})
+
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
 
 
 if __name__ == "__main__":

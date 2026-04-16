@@ -1,7 +1,9 @@
 flask
 reportlab
-beautifulsoup4 
+beautifulsoup4
 requests
 python-bidi==0.4.2
 xhtml2pdf
 gunicorn
+gspread
+google-auth
