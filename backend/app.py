@@ -210,6 +210,65 @@ def download_custom():
         return f"PDF Error: {str(e)}", 500
 
 
+@app.route("/debug-sheets")
+def debug_sheets():
+    """Temporary diagnostic route — remove after confirming sheets works."""
+    import json as _json
+    report = {}
+
+    # 1. Check env var
+    creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON", "")
+    report["GOOGLE_CREDENTIALS_JSON_set"] = bool(creds_json)
+    report["SHEET_ID"] = os.environ.get("SHEET_ID", "1p4djLv3YYCX8DmHuIvHb8zhVKTPih9tR80ihGiWOI1Y")
+
+    # 2. Check gspread importable
+    try:
+        import gspread
+        from google.oauth2.service_account import Credentials
+        report["gspread_installed"] = True
+    except ImportError as e:
+        report["gspread_installed"] = False
+        report["import_error"] = str(e)
+        return jsonify(report)
+
+    # 3. Try to build credentials
+    try:
+        if creds_json:
+            creds_dict = _json.loads(creds_json)
+            if "private_key" in creds_dict:
+                creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
+        else:
+            base_dir   = os.path.dirname(os.path.abspath(__file__))
+            creds_file = os.path.join(base_dir, "credentials.json")
+            with open(creds_file) as f:
+                creds_dict = _json.load(f)
+
+        report["service_account_email"] = creds_dict.get("client_email", "not found")
+        scopes = ["https://www.googleapis.com/auth/spreadsheets",
+                  "https://www.googleapis.com/auth/drive"]
+        creds  = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+        report["credentials_built"] = True
+    except Exception as e:
+        report["credentials_built"] = False
+        report["credentials_error"] = str(e)
+        return jsonify(report)
+
+    # 4. Try to connect to sheet
+    try:
+        client      = gspread.authorize(creds)
+        sheet_id    = report["SHEET_ID"]
+        spreadsheet = client.open_by_key(sheet_id)
+        report["sheet_connected"] = True
+        report["sheet_title"]     = spreadsheet.title
+        worksheets = [ws.title for ws in spreadsheet.worksheets()]
+        report["worksheets"] = worksheets
+    except Exception as e:
+        report["sheet_connected"] = False
+        report["sheet_error"]     = str(e)
+
+    return jsonify(report)
+
+
 @app.route("/admin/submissions")
 def admin_submissions():
     """

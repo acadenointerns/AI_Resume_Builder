@@ -61,6 +61,9 @@ def _get_client():
     if creds_json:
         try:
             creds_dict = json.loads(creds_json)
+            # Fix: Render sometimes escapes newlines in private_key as literal \n
+            if "private_key" in creds_dict:
+                creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
             creds = Credentials.from_service_account_info(creds_dict, scopes=_SCOPES)
             return gspread.authorize(creds)
         except Exception as exc:
