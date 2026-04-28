@@ -1,14 +1,25 @@
-from flask import Flask, render_template, request, send_file, jsonify
+from flask import Flask, render_template, request, send_file, jsonify, session, make_response
 from github_fetcher import fetch_github_profile
 from resume_engine import generate_resume
 from ats_scoring import score_resume
 from sheets_logger import log_student
-import os, time, json
+import os, time, json, secrets
 
 app = Flask(__name__)
+# Use a stable secret key from env-var so sessions survive restarts.
+# IMPORTANT: Set SECRET_KEY in your EC2 / Render environment variables.
+app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 
-latest_resume = None
-latest_ats = None
+# ── No global state: resume data is stored per-user in session ────────
+
+
+def _no_cache(response):
+    """Add headers that prevent CDN (CloudFront) and browsers from caching
+    user-specific responses."""
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"]        = "no-cache"
+    response.headers["Expires"]       = "0"
+    return response
 
 def _get_pdf_engine():
     """Attempt to find a working PDF engine."""
@@ -44,12 +55,12 @@ def _get_pdf_engine():
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    global latest_resume, latest_ats
+    # No globals — each request is fully self-contained.
 
     if request.method == "POST":
-        github         = request.form["github"].strip()
-        portfolio      = request.form.get("portfolio", "")
-        job_desc       = request.form["job_description"].strip()
+        github          = request.form["github"].strip()
+        portfolio       = request.form.get("portfolio", "")
+        job_desc        = request.form["job_description"].strip()
         github_data_raw = request.form.get("github_data")
 
         # Use client-side data if available (bypasses Render IP blocks)
@@ -92,19 +103,21 @@ def index():
         if personal_details["full_name"]:
             profile["name"] = personal_details["full_name"]
 
-        resume   = generate_resume(profile, job_desc, personal_details)
-        ats_data = score_resume(resume, job_desc)
+        resume    = generate_resume(profile, job_desc, personal_details)
+        ats_data  = score_resume(resume, job_desc)
         ats_score = ats_data["score"]
 
-        latest_resume = resume
-        latest_ats    = ats_score
+        # ✅ Store per-user in signed session cookie — never in globals.
+        session["resume"]    = resume
+        session["ats_score"] = ats_score
 
-        # ── Log student details to Google Sheets ──────────────────────
+        # ── Log student details to Google Sheets (write-only) ────────
         github_username = github.strip().split("/")[-1]
         log_student(personal_details, github_username)
-        # ──────────────────────────────────────────────────────────────
+        # ────────────────────────────────────────────────────────────
 
-        return render_template("result.html", resume=resume, score=ats_score)
+        resp = make_response(render_template("result.html", resume=resume, score=ats_score))
+        return _no_cache(resp)
 
     return render_template("index.html")
 
@@ -150,46 +163,46 @@ def _generate_pdf(rendered_html, name):
 
 @app.route("/download")
 def download_resume():
-    global latest_resume
-
-    if not latest_resume:
-        return "No resume generated yet", 400
+    # ✅ Read from session — isolated per user, never shared.
+    resume = session.get("resume")
+    if not resume:
+        return "No resume generated yet. Please submit the form first.", 400
 
     try:
-        rendered_html = render_template("resume_pdf.html", resume=latest_resume)
-        name          = latest_resume.get('name', 'Resume').replace(" ", "_")
+        rendered_html = render_template("resume_pdf.html", resume=resume)
+        name          = resume.get("name", "Resume").replace(" ", "_")
         output_path   = _generate_pdf(rendered_html, name)
 
-        return send_file(
+        return _no_cache(send_file(
             output_path,
             as_attachment=True,
             download_name=f"{name}.pdf",
-            mimetype='application/pdf'
-        )
+            mimetype="application/pdf"
+        ))
     except Exception as e:
         return f"PDF Error: {str(e)}. Please contact support.", 500
 
 
 @app.route("/download_custom", methods=["POST"])
 def download_custom():
-    global latest_resume
-
-    if not latest_resume:
-        return "No resume context found", 400
+    # ✅ Read from session — isolated per user, never shared.
+    resume = session.get("resume")
+    if not resume:
+        return "No resume context found. Please generate a resume first.", 400
 
     try:
-        name_raw         = request.form.get("name", "Resume")
-        name             = name_raw.replace(" ", "_")
-        summary_html     = request.form.get("summary_html", "")
-        skills_html      = request.form.get("skills_html", "")
-        experience_html  = request.form.get("experience_html", "")
-        education_html   = request.form.get("education_html", "")
+        name_raw          = request.form.get("name", "Resume")
+        name              = name_raw.replace(" ", "_")
+        summary_html      = request.form.get("summary_html", "")
+        skills_html       = request.form.get("skills_html", "")
+        experience_html   = request.form.get("experience_html", "")
+        education_html    = request.form.get("education_html", "")
         achievements_html = request.form.get("achievements_html", "")
-        contact_html     = request.form.get("contact_html", "")
+        contact_html      = request.form.get("contact_html", "")
 
         rendered_html = render_template(
             "resume_pdf.html",
-            resume=latest_resume,
+            resume=resume,
             custom_summary=summary_html,
             custom_skills=skills_html,
             custom_experience=experience_html,
@@ -200,12 +213,12 @@ def download_custom():
 
         output_path = _generate_pdf(rendered_html, name)
 
-        return send_file(
+        return _no_cache(send_file(
             output_path,
             as_attachment=True,
             download_name=f"{name}.pdf",
-            mimetype='application/pdf'
-        )
+            mimetype="application/pdf"
+        ))
     except Exception as e:
         return f"PDF Error: {str(e)}", 500
 

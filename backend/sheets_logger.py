@@ -20,6 +20,12 @@ import os
 import json
 import datetime
 
+try:
+    import pytz
+    _IST = pytz.timezone("Asia/Kolkata")
+except ImportError:
+    _IST = None  # pytz not installed — falls back to server local time
+
 # ── gspread is optional; if missing the feature is silently skipped ──
 try:
     import gspread
@@ -140,7 +146,11 @@ def log_student(personal_details: dict, github_username: str = "") -> bool:
         spreadsheet = client.open_by_key(sheet_id)
         ws          = _get_or_create_worksheet(spreadsheet)
 
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # Always log in IST regardless of the server's system timezone (EC2 defaults to UTC).
+        if _IST is not None:
+            timestamp = datetime.datetime.now(_IST).strftime("%Y-%m-%d %H:%M:%S IST")
+        else:
+            timestamp = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
         row = [
             timestamp,
             personal_details.get("full_name", ""),
