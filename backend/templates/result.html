@@ -386,7 +386,7 @@
 
                 <form id="download-form" action="/download_custom" method="POST">
                     <input type="hidden" name="name"               value="{{ resume.name }}">
-                    <input type="hidden" name="resume_json"        value="{{ resume | tojson | e }}">
+                    <input type="hidden" name="resume_json"        value='{{ resume | tojson }}'>
                     <input type="hidden" name="contact_html"       id="contact_html">
                     <input type="hidden" name="summary_html"       id="summary_html">
                     <input type="hidden" name="education_html"     id="education_html">

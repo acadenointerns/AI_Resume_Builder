@@ -161,9 +161,9 @@ def log_student(personal_details: dict, github_username: str = "") -> bool:
             github_username,
         ]
         ws.append_row(row)
-        print(f"[SheetsLogger] ✅ Logged: {personal_details.get('full_name', 'Unknown')} at {timestamp}")
+        print(f"[SheetsLogger] OK Logged: {personal_details.get('full_name', 'Unknown')} at {timestamp}")
         return True
 
     except Exception as exc:
-        print(f"[SheetsLogger] ❌ Failed to log to Sheets: {exc}")
+        print(f"[SheetsLogger] FAILED to log to Sheets: {exc}")
         return False
