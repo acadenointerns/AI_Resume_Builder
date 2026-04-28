@@ -199,13 +199,18 @@ def download_custom():
     # ✅ Prefer resume JSON embedded in the form (avoids cookie/session issues through CDN).
     # Fall back to session for backward compatibility.
     resume_json_raw = request.form.get("resume_json", "")
+    print(f"[DEBUG download_custom] resume_json present: {bool(resume_json_raw)}, length: {len(resume_json_raw)}")
+    print(f"[DEBUG download_custom] session keys: {list(session.keys())}")
     if resume_json_raw:
         try:
             resume = json.loads(resume_json_raw)
-        except Exception:
+            print(f"[DEBUG download_custom] json.loads OK, name={resume.get('name','?')}")
+        except Exception as ex:
+            print(f"[DEBUG download_custom] json.loads FAILED: {ex}")
             resume = session.get("resume")
     else:
         resume = session.get("resume")
+        print(f"[DEBUG download_custom] using session resume: {bool(resume)}")
 
     if not resume:
         return "No resume context found. Please generate a resume first.", 400
