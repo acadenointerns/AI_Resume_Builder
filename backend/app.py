@@ -4,11 +4,22 @@ from resume_engine import generate_resume
 from ats_scoring import score_resume
 from sheets_logger import log_student
 import os, time, json, secrets
+from flask_session import Session
 
 app = Flask(__name__)
 # Use a stable secret key from env-var so sessions survive restarts.
 # IMPORTANT: Set SECRET_KEY in your EC2 / Render environment variables.
 app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
+
+# ── Server-side filesystem sessions (avoids 4KB cookie size limit) ────
+_session_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".flask_sessions")
+os.makedirs(_session_dir, exist_ok=True)
+app.config["SESSION_TYPE"]           = "filesystem"
+app.config["SESSION_FILE_DIR"]       = _session_dir
+app.config["SESSION_PERMANENT"]      = False
+app.config["SESSION_USE_SIGNER"]     = True
+app.config["SESSION_FILE_THRESHOLD"] = 500   # max session files to keep
+Session(app)
 
 # ── No global state: resume data is stored per-user in session ────────
 

@@ -1,4 +1,5 @@
 flask
+flask-session
 reportlab
 beautifulsoup4
 requests
