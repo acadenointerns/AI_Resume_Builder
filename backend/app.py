@@ -196,8 +196,17 @@ def download_resume():
 
 @app.route("/download_custom", methods=["POST"])
 def download_custom():
-    # ✅ Read from session — isolated per user, never shared.
-    resume = session.get("resume")
+    # ✅ Prefer resume JSON embedded in the form (avoids cookie/session issues through CDN).
+    # Fall back to session for backward compatibility.
+    resume_json_raw = request.form.get("resume_json", "")
+    if resume_json_raw:
+        try:
+            resume = json.loads(resume_json_raw)
+        except Exception:
+            resume = session.get("resume")
+    else:
+        resume = session.get("resume")
+
     if not resume:
         return "No resume context found. Please generate a resume first.", 400
 
